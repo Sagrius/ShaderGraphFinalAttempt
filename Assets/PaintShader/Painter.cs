@@ -8,10 +8,11 @@ public class Painter : MonoBehaviour
     [SerializeField] private Camera cam;
     [SerializeField] private Shader drawShader;
 
-    private RenderTexture splatmap;
+    public  RenderTexture splatmap;
     private Material currentMaterial, drawMaterial;
     private RaycastHit hit;
 
+    public RenderTexture tempTex;
     [SerializeField] [Range(1, 500)] private float size;
     [SerializeField] [Range(0,1)] private float strength;
     // Start is called before the first frame update
@@ -39,6 +40,7 @@ public class Painter : MonoBehaviour
                 RenderTexture temp = RenderTexture.GetTemporary(splatmap.width, splatmap.height, 0, RenderTextureFormat.ARGBFloat);
                 Graphics.Blit(splatmap,temp);
                 Graphics.Blit(temp,splatmap,drawMaterial);
+                Graphics.Blit(temp, tempTex, drawMaterial);
                 RenderTexture.ReleaseTemporary(temp);
             }
         }
