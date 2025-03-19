@@ -22,11 +22,12 @@ public class DisplayColorChanger : MonoBehaviour
     public void ChangeCokor(int index)
     {
         Debug.Log($"Changed To {colorPallet[index]}");
-        foreach(Renderer brush in paintingObjectsPainters)
+        foreach(MeshRenderer brush in paintingObjectsPainters)
         {
-            //brush.gameObject.GetComponent<Painter>().currentColorIndex = index;
+            Debug.Log($"there are {brush.materials.Length} materials");
+            brush.gameObject.GetComponent<Painter>().currentColorIndex = index;
             //Debug.Log($"Changed to index {index} while there are {brush.materials.Length} Materials");
-            brush.material.SetColor("_DisplayColor", colorPallet[index]);
+            brush.materials[index].SetColor("_DisplayColor", colorPallet[index]);
         }
     }
 }

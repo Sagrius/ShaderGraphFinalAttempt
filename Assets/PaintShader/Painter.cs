@@ -7,10 +7,11 @@ public class Painter : MonoBehaviour
 {
     [SerializeField] private Camera cam;
     [SerializeField] private Shader drawShader;
-
+    public int currentColorIndex = 0;
     public  RenderTexture splatmap;
     private Material currentMaterial, drawMaterial;
     private RaycastHit hit;
+   
 
     public RenderTexture tempTex;
     [SerializeField] [Range(1, 500)] private float size;
@@ -21,15 +22,20 @@ public class Painter : MonoBehaviour
         drawMaterial = new Material(drawShader);
         drawMaterial.SetVector("_Color", Color.red);
 
-        currentMaterial = GetComponent<MeshRenderer>().material;
-
+        currentMaterial = GetComponent<MeshRenderer>().materials[currentColorIndex];
+        Debug.Log($"{GetComponent<MeshRenderer>().materials.Length}");
         splatmap = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
         currentMaterial.SetTexture("_SplatMap",splatmap);
+
+       
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        currentMaterial = GetComponent<MeshRenderer>().materials[currentColorIndex];
+        //drawMaterial = GetComponent<MeshRenderer>().materials[currentColorIndex];
         if (Input.GetMouseButton(0))
         {
             if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
