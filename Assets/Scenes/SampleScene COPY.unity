@@ -848,7 +848,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 2.14, y: 5.64, z: -14.75}
+  m_LocalPosition: {x: 2.14, y: 15.23, z: -23.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -909,12 +909,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: d3a48a73379def84eabe55e10f6a6de2,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d3a48a73379def84eabe55e10f6a6de2,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d3a48a73379def84eabe55e10f6a6de2,
         type: 3}
@@ -929,7 +929,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: d3a48a73379def84eabe55e10f6a6de2,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -14.73
+      value: -23.77
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d3a48a73379def84eabe55e10f6a6de2,
         type: 3}
@@ -1011,7 +1011,7 @@ MonoBehaviour:
   drawShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
   splatmap: {fileID: 0}
   tempTex: {fileID: 0}
-  size: 5
+  size: 3
   strength: 1
 --- !u!64 &332735088
 MeshCollider:
@@ -1788,7 +1788,7 @@ PrefabInstance:
     - target: {fileID: 5376623508619707363, guid: 85e26d6cbde4983449073befffb7f48e,
         type: 3}
       propertyPath: m_PropertySheet.m_Vector3f.m_Array.Array.data[1].m_Value.x
-      value: -10
+      value: -0.73
       objectReference: {fileID: 0}
     - target: {fileID: 5376623508619707363, guid: 85e26d6cbde4983449073befffb7f48e,
         type: 3}
@@ -1798,12 +1798,12 @@ PrefabInstance:
     - target: {fileID: 5376623508619707363, guid: 85e26d6cbde4983449073befffb7f48e,
         type: 3}
       propertyPath: m_PropertySheet.m_Vector3f.m_Array.Array.data[1].m_Value.z
-      value: 4.15
+      value: -23.33
       objectReference: {fileID: 0}
     - target: {fileID: 5421873444255243169, guid: 85e26d6cbde4983449073befffb7f48e,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10
+      value: -0.73
       objectReference: {fileID: 0}
     - target: {fileID: 5421873444255243169, guid: 85e26d6cbde4983449073befffb7f48e,
         type: 3}
@@ -1813,7 +1813,7 @@ PrefabInstance:
     - target: {fileID: 5421873444255243169, guid: 85e26d6cbde4983449073befffb7f48e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.15
+      value: -23.33
       objectReference: {fileID: 0}
     - target: {fileID: 5421873444255243169, guid: 85e26d6cbde4983449073befffb7f48e,
         type: 3}
