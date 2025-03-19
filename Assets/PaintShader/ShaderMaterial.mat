@@ -66,6 +66,6 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _DisplayColor: {r: 0, g: 0.095056534, b: 1, a: 0}
+    - _DisplayColor: {r: 0.047379375, g: 1, b: 0, a: 0}
     - _MainColor: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
