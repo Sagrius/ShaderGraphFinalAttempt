@@ -1396,7 +1396,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "7320a575ac29478b917bd7787211648e",
     "m_Id": 0,
-    "m_DisplayName": "SplatMap",
+    "m_DisplayName": "RenderTexture",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -2345,10 +2345,10 @@
     "m_Guid": {
         "m_GuidSerialized": "e8dc0fa1-ac38-468d-bfb2-b7d8c28780fb"
     },
-    "m_Name": "SplatMap",
+    "m_Name": "RenderTexture",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "SplatMap",
-    "m_DefaultReferenceName": "_SplatMap",
+    "m_RefNameGeneratedByDisplayName": "RenderTexture",
+    "m_DefaultReferenceName": "_RenderTexture",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,

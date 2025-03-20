@@ -6,9 +6,9 @@ using UnityEngine;
 public class Painter : MonoBehaviour
 {
     [SerializeField] private Camera cam;
-    [SerializeField] private Shader drawShader;
+    [SerializeField] private Shader hlslShader;
 
-    private RenderTexture splatmap;
+    private RenderTexture renderTexture;
     private Material currentMaterial, drawMaterial;
     private RaycastHit hit;
 
@@ -17,13 +17,18 @@ public class Painter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        drawMaterial = new Material(drawShader);
+        //Material created using the shader
+        drawMaterial = new Material(hlslShader);
         drawMaterial.SetVector("_Color", Color.red);
+        //The material that is from the shader graph
+        currentMaterial = new(GetComponent<MeshRenderer>().material);
+        gameObject.GetComponent<MeshRenderer>().material = currentMaterial;
+        //The material we're drawing into
+        renderTexture = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
+        renderTexture.Create();
 
-        currentMaterial = GetComponent<MeshRenderer>().material;
+        currentMaterial.SetTexture("_RenderTexture", renderTexture);
 
-        splatmap = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
-        currentMaterial.SetTexture("_SplatMap",splatmap);
     }
 
     // Update is called once per frame
@@ -33,12 +38,14 @@ public class Painter : MonoBehaviour
         {
             if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
             {
+                if (hit.collider.gameObject != gameObject) return;
+
                 drawMaterial.SetVector("_Coordinates", new Vector4(hit.textureCoord.x, hit.textureCoord.y, 0, 0));
                 drawMaterial.SetFloat("_Strength",strength);
                 drawMaterial.SetFloat("_Size",size);
-                RenderTexture temp = RenderTexture.GetTemporary(splatmap.width, splatmap.height, 0, RenderTextureFormat.ARGBFloat);
-                Graphics.Blit(splatmap,temp);
-                Graphics.Blit(temp,splatmap,drawMaterial);
+                RenderTexture temp = RenderTexture.GetTemporary(renderTexture.width, renderTexture.height, 0, RenderTextureFormat.ARGBFloat);
+                Graphics.Blit(renderTexture, temp);
+                Graphics.Blit(temp, renderTexture, drawMaterial);
                 RenderTexture.ReleaseTemporary(temp);
             }
         }
