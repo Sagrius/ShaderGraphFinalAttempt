@@ -71,12 +71,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _From: 0
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _To: 255
     m_Colors:
     - _DisplayColor: {r: 0, g: 0, b: 1, a: 0}
     - _HitPos: {r: 0, g: 0, b: 0, a: 0}
     - _MainColor: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 0}
-    - _StartingHeight: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 0}
+    - _StartingHeight: {r: 1, g: 1, b: 1, a: 0}
     - _TargetHeight: {r: 0, g: 0, b: 1, a: 0}
   m_BuildTextureStacks: []
