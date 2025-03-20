@@ -6,25 +6,33 @@ using UnityEngine;
 public class Painter : MonoBehaviour
 {
     [SerializeField] private Camera cam;
-    [SerializeField] private Shader drawShader;
 
-    public  RenderTexture splatmap;
+    [SerializeField] private Shader hlslShader;
+
+    [SerializeField] private  Color PaintColor = Color.cyan;
+
+    [SerializeField] [Range(1, 500)] private float size = 20;
+    [SerializeField] [Range(0,1)] private float strength = 0.35f;
+
+    private RenderTexture renderTexture;
     private Material currentMaterial, drawMaterial;
+
     private RaycastHit hit;
 
-    public RenderTexture tempTex;
-    [SerializeField] [Range(1, 500)] private float size;
-    [SerializeField] [Range(0,1)] private float strength;
     // Start is called before the first frame update
     void Start()
     {
-        drawMaterial = new Material(drawShader);
-        drawMaterial.SetVector("_Color", Color.red);
+        //Material created using the shader
+        drawMaterial = new Material(hlslShader);
+       
+        //The material that is from the shader graph
+        currentMaterial = new(GetComponent<MeshRenderer>().material);
+        gameObject.GetComponent<MeshRenderer>().material = currentMaterial;
+        //The material we're drawing into
+        renderTexture = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
+        renderTexture.Create();
 
-        currentMaterial = GetComponent<MeshRenderer>().material;
-
-        splatmap = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
-        currentMaterial.SetTexture("_SplatMap",splatmap);
+        currentMaterial.SetTexture("_RenderTexture", renderTexture);
     }
 
     // Update is called once per frame
@@ -34,13 +42,17 @@ public class Painter : MonoBehaviour
         {
             if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
             {
+                if (hit.collider.gameObject != gameObject) return;
+
+                currentMaterial.SetFloat("_BrushPower",strength);
+                drawMaterial.SetVector("_Color", PaintColor);
                 drawMaterial.SetVector("_Coordinates", new Vector4(hit.textureCoord.x, hit.textureCoord.y, 0, 0));
                 drawMaterial.SetFloat("_Strength",strength);
                 drawMaterial.SetFloat("_Size",size);
-                RenderTexture temp = RenderTexture.GetTemporary(splatmap.width, splatmap.height, 0, RenderTextureFormat.ARGBFloat);
-                Graphics.Blit(splatmap,temp);
-                Graphics.Blit(temp,splatmap,drawMaterial);
-                Graphics.Blit(temp, tempTex, drawMaterial);
+
+                RenderTexture temp = RenderTexture.GetTemporary(renderTexture.width, renderTexture.height, 0, RenderTextureFormat.ARGBFloat);
+                Graphics.Blit(renderTexture, temp);
+                Graphics.Blit(temp, renderTexture, drawMaterial);
                 RenderTexture.ReleaseTemporary(temp);
             }
         }
