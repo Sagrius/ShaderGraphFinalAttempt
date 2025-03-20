@@ -259,9 +259,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 330585545}
-  drawShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
-  splatmap: {fileID: 0}
-  tempTex: {fileID: 0}
+  hlslShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
+  PaintColor: {r: 0, g: 1, b: 1, a: 1}
   size: 5
   strength: 0.54
 --- !u!1 &62918551
@@ -1008,9 +1007,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 330585545}
-  drawShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
-  splatmap: {fileID: 0}
-  tempTex: {fileID: 0}
+  hlslShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
+  PaintColor: {r: 0, g: 1, b: 1, a: 1}
   size: 3
   strength: 1
 --- !u!64 &332735088
@@ -1243,9 +1241,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 330585545}
-  drawShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
-  splatmap: {fileID: 0}
-  tempTex: {fileID: 8400000, guid: 755813f43c466d24fac62ea800b682a9, type: 2}
+  hlslShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
+  PaintColor: {r: 0, g: 1, b: 1, a: 1}
   size: 5
   strength: 0.185
 --- !u!23 &431622709
@@ -2024,9 +2021,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 330585545}
-  drawShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
-  splatmap: {fileID: 0}
-  tempTex: {fileID: 0}
+  hlslShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
+  PaintColor: {r: 0, g: 1, b: 1, a: 1}
   size: 11
   strength: 1
 --- !u!23 &1213127125
@@ -2608,9 +2604,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 330585545}
-  drawShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
-  splatmap: {fileID: 0}
-  tempTex: {fileID: 0}
+  hlslShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
+  PaintColor: {r: 0, g: 1, b: 1, a: 1}
   size: 30
   strength: 0.117
 --- !u!1 &1674460169
@@ -3006,9 +3001,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 330585545}
-  drawShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
-  splatmap: {fileID: 0}
-  tempTex: {fileID: 0}
+  hlslShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
+  PaintColor: {r: 0, g: 1, b: 1, a: 1}
   size: 5
   strength: 0.248
 --- !u!23 &1945633982
