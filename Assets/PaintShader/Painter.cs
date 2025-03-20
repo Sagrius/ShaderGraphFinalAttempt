@@ -19,7 +19,6 @@ public class Painter : MonoBehaviour
 
     private RaycastHit hit;
 
-    // Start is called before the first frame update
     void Start()
     {
         //Material created using the shader
@@ -28,14 +27,15 @@ public class Painter : MonoBehaviour
         //The material that is from the shader graph
         currentMaterial = new(GetComponent<MeshRenderer>().material);
         gameObject.GetComponent<MeshRenderer>().material = currentMaterial;
-        //The material we're drawing into
+        //The render texture we're drawing into , make a seperate instance for every script holder
         renderTexture = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
         renderTexture.Create();
-
+        //Sets the render texture to the default texture 
+        Graphics.Blit(currentMaterial.GetTexture("_MainTexture"),renderTexture);
+        //Sets the render texture to the shader graph
         currentMaterial.SetTexture("_RenderTexture", renderTexture);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButton(0))
@@ -45,11 +45,13 @@ public class Painter : MonoBehaviour
                 if (hit.collider.gameObject != gameObject) return;
 
                 currentMaterial.SetFloat("_BrushPower",strength);
+
                 drawMaterial.SetVector("_Color", PaintColor);
                 drawMaterial.SetVector("_Coordinates", new Vector4(hit.textureCoord.x, hit.textureCoord.y, 0, 0));
                 drawMaterial.SetFloat("_Strength",strength);
                 drawMaterial.SetFloat("_Size",size);
 
+                //The act saving the changes
                 RenderTexture temp = RenderTexture.GetTemporary(renderTexture.width, renderTexture.height, 0, RenderTextureFormat.ARGBFloat);
                 Graphics.Blit(renderTexture, temp);
                 Graphics.Blit(temp, renderTexture, drawMaterial);
