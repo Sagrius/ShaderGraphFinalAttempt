@@ -58,7 +58,8 @@ Shader "Unlit/DrawShader"
                 fixed4 drawcol = _Color * (draw*_Strength);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                return saturate(col+drawcol);
+                return lerp(col, _Color, draw * _Strength);
+
             }
             ENDCG
         }
