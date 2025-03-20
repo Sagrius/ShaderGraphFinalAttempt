@@ -36,6 +36,7 @@ Shader "Unlit/DrawShader"
                 float4 vertex : SV_POSITION;
             };
 
+            int _Mode;
             sampler2D _MainTex;
             float4 _MainTex_ST;
             fixed4 _Coordinates,_Color;
@@ -47,6 +48,7 @@ Shader "Unlit/DrawShader"
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 UNITY_TRANSFER_FOG(o,o.vertex);
+
                 return o;
             }
 
