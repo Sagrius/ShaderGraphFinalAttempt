@@ -40,6 +40,8 @@ public class Painter : MonoBehaviour
         //Sets the render texture to the default texture 
         Graphics.Blit(currentMaterial.GetTexture("_MainTexture"), renderTexture);
 
+        //Graphics.Blit(currentMaterial.GetTexture("_MainTexture"), displacementTexture);
+
         //Sets the render texture to the shader graph
         currentMaterial.SetTexture("_RenderTexture", renderTexture);
 
