@@ -1009,7 +1009,7 @@ MonoBehaviour:
   cam: {fileID: 330585545}
   hlslShader: {fileID: 4800000, guid: 8da171427476147448ab292e5db9d58a, type: 3}
   PaintColor: {r: 0, g: 1, b: 1, a: 1}
-  size: 3
+  size: 14
   strength: 1
 --- !u!64 &332735088
 MeshCollider:
@@ -2399,7 +2399,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1512044671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3064,7 +3064,7 @@ Transform:
   m_GameObject: {fileID: 1945633979}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.39, y: -15.469949, z: -40.6}
+  m_LocalPosition: {x: 5.39, y: -15.469949, z: -48.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -56,5 +56,24 @@ public class Painter : MonoBehaviour
                 RenderTexture.ReleaseTemporary(temp);
             }
         }
+
+        if (Input.GetMouseButton(1))
+        {
+            if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
+            {
+                if (hit.collider.gameObject != gameObject) return;
+
+                currentMaterial.SetFloat("_BrushPower", strength);
+                drawMaterial.SetVector("_Color", PaintColor);
+                drawMaterial.SetVector("_Coordinates", new Vector4(hit.textureCoord.x, hit.textureCoord.y, 0, 0));
+                drawMaterial.SetFloat("_Strength", strength);
+                drawMaterial.SetFloat("_Size", size);
+
+                RenderTexture temp = RenderTexture.GetTemporary(renderTexture.width, renderTexture.height, 0, RenderTextureFormat.ARGBFloat);
+                Graphics.Blit(renderTexture, temp);
+                Graphics.Blit(temp, renderTexture, drawMaterial);
+                RenderTexture.ReleaseTemporary(temp);
+            }
+        }
     }
 }
