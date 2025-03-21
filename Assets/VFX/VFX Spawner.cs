@@ -13,13 +13,34 @@ public class VFXSpawner : MonoBehaviour
 
     void Update()
     {
+        //Paint particles
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            VFX.SendEvent("Spawn");
+            VFX.SendEvent("SpawnPaint");
         }
         else if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            VFX.SendEvent("StopSpawn");
+            VFX.SendEvent("StopPaint");
+        }
+
+        //Grow particles
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            VFX.SendEvent("SpawnGrow");
+        }
+        else if (Input.GetKeyUp(KeyCode.Mouse1))
+        {
+            VFX.SendEvent("StopGrow");
+        }
+
+        //Shrink particles
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            VFX.SendEvent("SpawnCut");
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            VFX.SendEvent("StopCut");
         }
 
         if (Physics.Raycast(Cam.ScreenPointToRay(Input.mousePosition), out hit))

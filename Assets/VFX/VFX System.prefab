@@ -200,6 +200,10 @@ MonoBehaviour:
   VFX: {fileID: 5376623508619707363}
   VFXPos: {fileID: 327195155860303776}
   Cam: {fileID: 0}
+  ParticleTextures:
+  - {fileID: 2800000, guid: b02e714f2bde3194fad610f59f5b801e, type: 3}
+  - {fileID: 2800000, guid: 7cb28ac6e28aa594ebb47afe52d76efb, type: 3}
+  - {fileID: 2800000, guid: a39bac289e506e3458df5d82e3c8f398, type: 3}
 --- !u!1 &4657321922628514377
 GameObject:
   m_ObjectHideFlags: 0
