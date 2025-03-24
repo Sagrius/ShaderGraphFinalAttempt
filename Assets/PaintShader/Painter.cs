@@ -11,8 +11,8 @@ public class Painter : MonoBehaviour
 
     [SerializeField] public  Color PaintColor = Color.cyan;
 
-    [SerializeField] [Range(1, 500)] private float size = 20;
-    [SerializeField] [Range(0,1)] private float strength = 0.35f;
+    [SerializeField] [Range(1, 30)] public float size = 20;
+    [SerializeField] [Range(0,1)] public float strength = 0.35f;
 
     private RenderTexture renderTexture;
     private RenderTexture displacementTexture;
