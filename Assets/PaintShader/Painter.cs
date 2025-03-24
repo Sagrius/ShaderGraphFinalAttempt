@@ -9,7 +9,7 @@ public class Painter : MonoBehaviour
 
     [SerializeField] private Shader hlslShader;
 
-    [SerializeField] private  Color PaintColor = Color.cyan;
+    [SerializeField] public  Color PaintColor = Color.cyan;
 
     [SerializeField] [Range(1, 500)] private float size = 20;
     [SerializeField] [Range(0,1)] private float strength = 0.35f;
