@@ -5,28 +5,23 @@ using UnityEngine;
 public class DisplayColorChanger : MonoBehaviour
 {
 
-    public List<Renderer> paintingObjectsPainters;
+    public List<Painter> paintingObjectsPainters;
     public List<Color> colorPallet;
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 
     public void ChangeCokor(int index)
     {
         Debug.Log($"Changed To {colorPallet[index]}");
-        foreach(Renderer brush in paintingObjectsPainters)
+        foreach(var brush in paintingObjectsPainters)
         {
-            //brush.gameObject.GetComponent<Painter>().currentColorIndex = index;
-            //Debug.Log($"Changed to index {index} while there are {brush.materials.Length} Materials");
-            brush.material.SetColor("_DisplayColor", colorPallet[index]);
+
+            brush.PaintColor = colorPallet[index];
+
+            //    Debug.Log($"there are {brush.materials.Length} materials");
+            //    brush.gameObject.GetComponent<Painter>().currentColorIndex = index;
+            //    //Debug.Log($"Changed to index {index} while there are {brush.materials.Length} Materials");
+            //    brush. SetColor("_DisplayColor", colorPallet[index]);
         }
     }
 }
