@@ -32,10 +32,10 @@ public class Painter : MonoBehaviour
         currentMaterial = new(GetComponent<MeshRenderer>().material);
         gameObject.GetComponent<MeshRenderer>().material = currentMaterial;
         //The render texture we're drawing into , make a seperate instance for every script holder
-        renderTexture = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
+        renderTexture = new RenderTexture(1024, 512, 0, RenderTextureFormat.ARGBFloat);
         renderTexture.Create();
 
-        displacementTexture = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
+        displacementTexture = new RenderTexture(1024, 512, 0, RenderTextureFormat.ARGBFloat);
         displacementTexture.Create();
         //Sets the render texture to the default texture 
         Graphics.Blit(currentMaterial.GetTexture("_MainTexture"), renderTexture);

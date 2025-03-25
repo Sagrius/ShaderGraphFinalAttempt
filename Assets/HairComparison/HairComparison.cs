@@ -83,7 +83,7 @@ public class TextureComparison : MonoBehaviour
 
         // Set the temp render texture as active and read its pixels
         RenderTexture.active = tempRT;
-        texture2D.Resize(tempRT.width, tempRT.height);
+        texture2D.Reinitialize(tempRT.width, tempRT.height);
         texture2D.ReadPixels(new Rect(0, 0, tempRT.width, tempRT.height), 0, 0);
         texture2D.Apply();
 
