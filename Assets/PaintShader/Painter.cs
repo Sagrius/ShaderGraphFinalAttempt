@@ -6,24 +6,46 @@ using UnityEngine;
 public class Painter : MonoBehaviour
 {
     [SerializeField] private Camera cam;
-    [SerializeField] private Shader drawShader;
 
-    private RenderTexture splatmap;
-    private Material currentMaterial, drawMaterial;
+    [SerializeField] private Shader hlslShader;
+
+    [SerializeField] public  Color PaintColor = Color.cyan;
+
+    [SerializeField] [Range(1, 30)] public float size = 20;
+    [SerializeField] [Range(0,1)] public float strength = 0.35f;
+
+    private RenderTexture renderTexture;
+    private RenderTexture displacementTexture;
+    private Material currentMaterial, drawMaterial, displacementMat;
+
     private RaycastHit hit;
 
-    [SerializeField] [Range(1, 500)] private float size;
-    [SerializeField] [Range(0,1)] private float strength;
     // Start is called before the first frame update
     void Start()
     {
-        drawMaterial = new Material(drawShader);
-        drawMaterial.SetVector("_Color", Color.red);
+        //Material created using the shader
+        drawMaterial = new Material(hlslShader);
 
-        currentMaterial = GetComponent<MeshRenderer>().material;
+        displacementMat = new Material(hlslShader);
+       
+        //The material that is from the shader graph
+        currentMaterial = new(GetComponent<MeshRenderer>().material);
+        gameObject.GetComponent<MeshRenderer>().material = currentMaterial;
+        //The render texture we're drawing into , make a seperate instance for every script holder
+        renderTexture = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
+        renderTexture.Create();
 
-        splatmap = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
-        currentMaterial.SetTexture("_SplatMap",splatmap);
+        displacementTexture = new RenderTexture(1024, 1024, 0, RenderTextureFormat.ARGBFloat);
+        displacementTexture.Create();
+        //Sets the render texture to the default texture 
+        Graphics.Blit(currentMaterial.GetTexture("_MainTexture"), renderTexture);
+
+        //Graphics.Blit(currentMaterial.GetTexture("_MainTexture"), displacementTexture);
+
+        //Sets the render texture to the shader graph
+        currentMaterial.SetTexture("_RenderTexture", renderTexture);
+
+        currentMaterial.SetTexture("_DisplacementTex", displacementTexture);
     }
 
     // Update is called once per frame
@@ -33,12 +55,52 @@ public class Painter : MonoBehaviour
         {
             if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
             {
+                if (hit.collider.gameObject != gameObject) return;
+
+                drawMaterial.SetVector("_Color", PaintColor);
                 drawMaterial.SetVector("_Coordinates", new Vector4(hit.textureCoord.x, hit.textureCoord.y, 0, 0));
                 drawMaterial.SetFloat("_Strength",strength);
                 drawMaterial.SetFloat("_Size",size);
-                RenderTexture temp = RenderTexture.GetTemporary(splatmap.width, splatmap.height, 0, RenderTextureFormat.ARGBFloat);
-                Graphics.Blit(splatmap,temp);
-                Graphics.Blit(temp,splatmap,drawMaterial);
+
+                RenderTexture temp = RenderTexture.GetTemporary(renderTexture.width, renderTexture.height, 0, RenderTextureFormat.ARGBFloat);
+                Graphics.Blit(renderTexture, temp);
+                Graphics.Blit(temp, renderTexture, drawMaterial);
+                RenderTexture.ReleaseTemporary(temp);
+            }
+        }
+
+        if (Input.GetMouseButton(1))
+        {
+            if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
+            {
+                if (hit.collider.gameObject != gameObject) return;
+
+                displacementMat.SetVector("_Color", Color.blue);
+                displacementMat.SetVector("_Coordinates", new Vector4(hit.textureCoord.x, hit.textureCoord.y, 0, 0));
+                displacementMat.SetFloat("_Strength", strength);
+                displacementMat.SetFloat("_Size", size);
+
+                RenderTexture temp = RenderTexture.GetTemporary(displacementTexture.width, displacementTexture.height, 0, RenderTextureFormat.ARGBFloat);
+                Graphics.Blit(displacementTexture, temp);
+                Graphics.Blit(temp, displacementTexture, displacementMat);
+                RenderTexture.ReleaseTemporary(temp);
+            }
+        }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
+            {
+                if (hit.collider.gameObject != gameObject) return;
+
+                displacementMat.SetVector("_Color", Color.black);
+                displacementMat.SetVector("_Coordinates", new Vector4(hit.textureCoord.x, hit.textureCoord.y, 0, 0));
+                displacementMat.SetFloat("_Strength", strength);
+                displacementMat.SetFloat("_Size", size);
+
+                RenderTexture temp = RenderTexture.GetTemporary(displacementTexture.width, displacementTexture.height, 0, RenderTextureFormat.ARGBFloat);
+                Graphics.Blit(displacementTexture, temp);
+                Graphics.Blit(temp, displacementTexture, displacementMat);
                 RenderTexture.ReleaseTemporary(temp);
             }
         }

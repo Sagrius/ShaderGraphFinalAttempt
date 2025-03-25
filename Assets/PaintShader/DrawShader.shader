@@ -1,4 +1,4 @@
-Shader "Unlit/NewUnlitShader"
+Shader "Unlit/DrawShader"
 {
     Properties
     {
@@ -36,6 +36,7 @@ Shader "Unlit/NewUnlitShader"
                 float4 vertex : SV_POSITION;
             };
 
+            int _Mode;
             sampler2D _MainTex;
             float4 _MainTex_ST;
             fixed4 _Coordinates,_Color;
@@ -47,6 +48,7 @@ Shader "Unlit/NewUnlitShader"
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 UNITY_TRANSFER_FOG(o,o.vertex);
+
                 return o;
             }
 
@@ -58,7 +60,8 @@ Shader "Unlit/NewUnlitShader"
                 fixed4 drawcol = _Color * (draw*_Strength);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                return saturate(col+drawcol);
+                return lerp(col, _Color, draw * _Strength);
+
             }
             ENDCG
         }
