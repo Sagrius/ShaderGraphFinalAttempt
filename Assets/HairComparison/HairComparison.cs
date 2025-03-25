@@ -1,246 +1,196 @@
 using UnityEngine;
-using System.Collections;
+using TMPro;
 
-public class HairComparison : MonoBehaviour
+public class TextureComparison : MonoBehaviour
 {
-    [Header("Texture References")]
-    [SerializeField] private Texture2D playerHairTexture;
-    [SerializeField] private Texture2D targetHairTexture;
-    [SerializeField] private RenderTexture resultRenderTexture;
+    [SerializeField] private Painter painterScript;        // Reference to the Painter script
+    [SerializeField] private Texture2D targetTexture;      // The target/reference texture
+    [SerializeField] private TextMeshProUGUI scoreText;    // Text to display score percentage
 
-    [Header("Shader References")]
-    [SerializeField] private Material hairComparisonMaterial;
+    // Temporary texture for converting 
+    private Texture2D painterTexture2D;
 
-    [Header("Comparison Settings")]
-    [SerializeField][Range(0.0f, 1.0f)] private float colorMatchWeight = 0.4f;
-    [SerializeField][Range(0.0f, 1.0f)] private float shapeMatchWeight = 0.4f;
-    [SerializeField][Range(0.0f, 1.0f)] private float lengthMatchWeight = 0.2f;
-    [SerializeField][Range(0.0f, 1.0f)] private float difficultyMultiplier = 0.5f;
-    [SerializeField] private bool isHighResolutionMode = true;
-
-    // Results
-    private float overallSimilarityScore = 0.0f;
-    private float colorSimilarityScore = 0.0f;
-    private float shapeSimilarityScore = 0.0f;
-    private float lengthSimilarityScore = 0.0f;
-
-    // Cache for analyzed pixels
-    private Color32[] playerPixels;
-    private Color32[] targetPixels;
-    private int width, height;
-
-    // Texture analysis results
-    private Texture2D mismatchMapTexture;
+    // Result percentage
+    private float matchPercentage = 0.0f;
 
     private void Start()
     {
-        if (hairComparisonMaterial == null)
+        if (painterScript == null)
         {
-            Debug.LogError("Hair comparison material is not assigned!");
+            Debug.LogError("Painter script reference is missing!");
             return;
         }
 
-        // Create mismatch map texture
-        mismatchMapTexture = new Texture2D(512, 512, TextureFormat.RGBA32, false);
+        // Create texture for reading pixels
+        painterTexture2D = new Texture2D(1024, 1024, TextureFormat.RGBA32, false);
     }
 
     /// <summary>
-    /// Performs hair style comparison between player's hair and target hair
+    /// Compares pixels between painter's current material texture and target texture
+    /// Returns a match percentage (0-100)
     /// </summary>
-    public float CompareHairStyles()
+    public float CompareTextures()
     {
-        if (playerHairTexture == null || targetHairTexture == null)
+        if (painterScript == null || targetTexture == null)
         {
-            Debug.LogError("Player or target hair textures are missing!");
+            Debug.LogError("Painter script or target texture is missing!");
             return 0f;
         }
 
-        // Determine resolution mode based on texture size
-        isHighResolutionMode = (playerHairTexture.width >= 512 || playerHairTexture.height >= 512);
+        // Get the current material from the Painter script
+        Material currentMaterial = painterScript.currentMaterial;
+        if (currentMaterial == null)
+        {
+            Debug.LogError("Could not access painter's current material!");
+            return 0f;
+        }
 
-        // Prepare textures for analysis
-        PrepareTexturesForAnalysis();
+        // Get the render texture from the current material
+        Texture renderTexture = currentMaterial.GetTexture("_RenderTexture");
+        if (renderTexture == null)
+        {
+            Debug.LogError("Current material doesn't have a _RenderTexture!");
+            return 0f;
+        }
 
-        // Perform pixel-based comparison
-        AnalyzeHairTextures();
+        // Convert texture to Texture2D for comparison
+        ConvertTextureToTexture2D(renderTexture, painterTexture2D);
 
-        // Generate visualization of comparison results
-        GenerateComparisonVisualization();
+        // Compare pixels and get percentage
+        matchPercentage = ComparePixels(painterTexture2D, targetTexture);
 
-        // Calculate overall score with difficulty adjustment
-        CalculateFinalScore();
-
-        return overallSimilarityScore;
+        return matchPercentage;
     }
 
-    private void PrepareTexturesForAnalysis()
+    /// <summary>
+    /// Converts any texture to a Texture2D
+    /// </summary>
+    private void ConvertTextureToTexture2D(Texture sourceTexture, Texture2D texture2D)
     {
-        // Ensure textures are readable
-        if (!playerHairTexture.isReadable || !targetHairTexture.isReadable)
+        // Create a temporary RenderTexture
+        RenderTexture tempRT = RenderTexture.GetTemporary(
+            sourceTexture.width,
+            sourceTexture.height,
+            0,
+            RenderTextureFormat.ARGB32
+        );
+
+        // Copy source texture to the temporary RenderTexture
+        Graphics.Blit(sourceTexture, tempRT);
+
+        // Remember currently active render texture
+        RenderTexture currentActiveRT = RenderTexture.active;
+
+        // Set the temp render texture as active and read its pixels
+        RenderTexture.active = tempRT;
+        texture2D.Resize(tempRT.width, tempRT.height);
+        texture2D.ReadPixels(new Rect(0, 0, tempRT.width, tempRT.height), 0, 0);
+        texture2D.Apply();
+
+        // Restore previously active render texture
+        RenderTexture.active = currentActiveRT;
+
+        // Release the temporary render texture
+        RenderTexture.ReleaseTemporary(tempRT);
+    }
+
+    /// <summary>
+    /// Compares pixels between two textures and returns match percentage
+    /// </summary>
+    private float ComparePixels(Texture2D texture1, Texture2D texture2)
+    {
+        // Ensure target texture is readable
+        if (!targetTexture.isReadable)
         {
-            Debug.LogError("Textures must be marked as readable in import settings!");
-            return;
+            Debug.LogError("Target texture must be marked as readable in import settings!");
+            return 0f;
         }
 
         // Get dimensions (use smallest for comparison)
-        width = Mathf.Min(playerHairTexture.width, targetHairTexture.width);
-        height = Mathf.Min(playerHairTexture.height, targetHairTexture.height);
+        int width = Mathf.Min(texture1.width, texture2.width);
+        int height = Mathf.Min(texture1.height, texture2.height);
 
         // Get pixel data
-        playerPixels = playerHairTexture.GetPixels32();
-        targetPixels = targetHairTexture.GetPixels32();
-    }
+        Color32[] pixels1 = texture1.GetPixels32();
+        Color32[] pixels2 = texture2.GetPixels32();
 
-    private void AnalyzeHairTextures()
-    {
-        // Analysis counters
         int totalPixels = width * height;
-        int matchingColorPixels = 0;
-        int matchingShapePixels = 0;
-        int playerHairPixels = 0;
-        int targetHairPixels = 0;
+        int matchingPixels = 0;
+        int coloredPixels = 0;
 
-        // Settings adjusted by difficulty
-        float colorThreshold = isHighResolutionMode ? 0.1f : 0.2f;
-        colorThreshold *= (2.0f - difficultyMultiplier); // Higher difficulty = lower threshold
-
-        // Prepare result texture
-        Color32[] mismatchMapPixels = new Color32[totalPixels];
-
-        // Analyze each pixel
+        // Compare each pixel
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                int index = y * width + x;
+                // Calculate indices in the original textures
+                int index1 = y * texture1.width + x;
+                int index2 = y * texture2.width + x;
+
+                // Make sure we don't go out of bounds
+                if (index1 >= pixels1.Length || index2 >= pixels2.Length)
+                {
+                    continue;
+                }
 
                 // Get pixels from both textures
-                Color32 playerPixel = playerPixels[index];
-                Color32 targetPixel = targetPixels[index];
+                Color32 pixel1 = pixels1[index1];
+                Color32 pixel2 = pixels2[index2];
 
-                // Check if this is a hair pixel in either texture
-                bool isPlayerHair = playerPixel.a > 128; // Alpha > 0.5
-                bool isTargetHair = targetPixel.a > 128; // Alpha > 0.5
+                // Check if this is a colored pixel in target texture (not transparent)
+                bool isTargetColored = pixel2.a > 128;
 
-                // Count hair pixels for shape analysis
-                if (isPlayerHair) playerHairPixels++;
-                if (isTargetHair) targetHairPixels++;
-
-                // Color comparison
-                float colorDifference = ColorDifference(playerPixel, targetPixel);
-                bool isColorMatch = colorDifference < colorThreshold;
-
-                // Count matching pixels
-                if (isPlayerHair && isTargetHair)
+                if (isTargetColored)
                 {
-                    matchingShapePixels++;
-                    if (isColorMatch) matchingColorPixels++;
-                }
+                    coloredPixels++;
 
-                // Set pixel in mismatch map
-                if (isPlayerHair || isTargetHair)
-                {
-                    if (isPlayerHair && isTargetHair && isColorMatch)
+                    // Simple color comparison - consider match if colors are very close
+                    if (ColorDifference(pixel1, pixel2) < 0.1f)
                     {
-                        // Good match - green
-                        mismatchMapPixels[index] = new Color32(0, 255, 0, 255);
+                        matchingPixels++;
                     }
-                    else if (isPlayerHair && isTargetHair)
-                    {
-                        // Shape match but color mismatch - yellow
-                        mismatchMapPixels[index] = new Color32(255, 255, 0, 255);
-                    }
-                    else if (isPlayerHair)
-                    {
-                        // Player hair only - red
-                        mismatchMapPixels[index] = new Color32(255, 0, 0, 255);
-                    }
-                    else
-                    {
-                        // Target hair only - blue
-                        mismatchMapPixels[index] = new Color32(0, 0, 255, 255);
-                    }
-                }
-                else
-                {
-                    // No hair - transparent
-                    mismatchMapPixels[index] = new Color32(0, 0, 0, 0);
                 }
             }
         }
 
-        // Calculate similarity scores
-        int maxHairPixels = Mathf.Max(playerHairPixels, targetHairPixels);
-        if (maxHairPixels > 0)
-        {
-            // Shape similarity based on overlap (Dice coefficient)
-            shapeSimilarityScore = (2.0f * matchingShapePixels) / (playerHairPixels + targetHairPixels);
+        // Calculate match percentage
+        float percentage = (coloredPixels > 0) ? ((float)matchingPixels / coloredPixels * 100f) : 0f;
 
-            // Color similarity among matching shape pixels
-            colorSimilarityScore = matchingShapePixels > 0 ?
-                (float)matchingColorPixels / matchingShapePixels : 0;
-
-            // Length similarity (estimate based on total hair pixels)
-            float pixelRatio = (float)Mathf.Min(playerHairPixels, targetHairPixels) /
-                               Mathf.Max(playerHairPixels, targetHairPixels);
-            lengthSimilarityScore = pixelRatio;
-        }
-
-        // Update mismatch map texture
-        mismatchMapTexture.SetPixels32(mismatchMapPixels);
-        mismatchMapTexture.Apply();
+        return percentage;
     }
 
     private float ColorDifference(Color32 a, Color32 b)
     {
         // Simple color difference calculation
-        return (Mathf.Abs(a.r - b.r) + Mathf.Abs(a.g - b.g) + Mathf.Abs(a.b - b.b)) / (3.0f * 255.0f);
+        float rDiff = Mathf.Abs(a.r - b.r) / 255f;
+        float gDiff = Mathf.Abs(a.g - b.g) / 255f;
+        float bDiff = Mathf.Abs(a.b - b.b) / 255f;
+
+        return (rDiff + gDiff + bDiff) / 3f;
     }
 
-    private void GenerateComparisonVisualization()
+    private void Update()
     {
-        // Set shader properties for visualization
-        hairComparisonMaterial.SetTexture("_PlayerHairTex", playerHairTexture);
-        hairComparisonMaterial.SetTexture("_TargetHairTex", targetHairTexture);
-        hairComparisonMaterial.SetTexture("_MismatchMapTex", mismatchMapTexture);
-        hairComparisonMaterial.SetFloat("_OverallScore", overallSimilarityScore);
-        hairComparisonMaterial.SetFloat("_ColorScore", colorSimilarityScore);
-        hairComparisonMaterial.SetFloat("_ShapeScore", shapeSimilarityScore);
-
-        // Render the result to a render texture
-        Graphics.Blit(null, resultRenderTexture, hairComparisonMaterial);
-    }
-
-    private void CalculateFinalScore()
-    {
-        // Calculate weighted score
-        float weightSum = colorMatchWeight + shapeMatchWeight + lengthMatchWeight;
-        float rawScore = (colorSimilarityScore * colorMatchWeight +
-                         shapeSimilarityScore * shapeMatchWeight +
-                         lengthSimilarityScore * lengthMatchWeight) / weightSum;
-
-        // Apply difficulty scaling
-        if (isHighResolutionMode)
+        // Check for Z key press to perform comparison
+        if (Input.GetKeyDown(KeyCode.Z))
         {
-            // High resolution mode is more demanding
-            float difficultyFactor = 0.7f + (0.3f * difficultyMultiplier);
-            rawScore *= difficultyFactor;
-        }
-        else
-        {
-            // Low resolution mode is more forgiving
-            float leniencyFactor = 0.8f + (0.2f * (1.0f - difficultyMultiplier));
-            rawScore = Mathf.Min(1.0f, rawScore * leniencyFactor);
-        }
+            float percentage = CompareTextures();
 
-        overallSimilarityScore = Mathf.Clamp01(rawScore);
+            // Display score as percentage
+            if (scoreText != null)
+            {
+                scoreText.text = percentage.ToString("F1") + "%";
+
+                // Color based on match percentage
+                if (percentage >= 90f)
+                    scoreText.color = Color.green;
+                else if (percentage >= 70f)
+                    scoreText.color = Color.yellow;
+                else
+                    scoreText.color = Color.red;
+            }
+
+            Debug.Log($"Texture comparison: {percentage:F1}% match");
+        }
     }
-
-    // Getters for UI display
-    public float GetOverallScore() => overallSimilarityScore;
-    public float GetColorScore() => colorSimilarityScore;
-    public float GetShapeScore() => shapeSimilarityScore;
-    public float GetLengthScore() => lengthSimilarityScore;
-    public Texture2D GetMismatchMapTexture() => mismatchMapTexture;
-    public bool IsHighResMode() => isHighResolutionMode;
 }

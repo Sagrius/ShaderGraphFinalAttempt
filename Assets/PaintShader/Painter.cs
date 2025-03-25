@@ -14,9 +14,9 @@ public class Painter : MonoBehaviour
     [SerializeField] [Range(1, 30)] public float size = 20;
     [SerializeField] [Range(0,1)] public float strength = 0.35f;
 
-    private RenderTexture renderTexture;
+    public RenderTexture renderTexture;
     private RenderTexture displacementTexture;
-    private Material currentMaterial, drawMaterial, displacementMat;
+    public Material currentMaterial, drawMaterial, displacementMat;
 
     private RaycastHit hit;
 
