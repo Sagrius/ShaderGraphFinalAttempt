@@ -79,6 +79,6 @@ Material:
     - _DisplayColor: {r: 0, g: 0, b: 1, a: 0}
     - _HitPos: {r: 0, g: 0, b: 0, a: 0}
     - _MainColor: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 0}
-    - _StartingHeight: {r: 1, g: 1, b: 1, a: 0}
+    - _StartingHeight: {r: 0, g: 0, b: 0, a: 0}
     - _TargetHeight: {r: 0, g: 0, b: 1, a: 0}
   m_BuildTextureStacks: []
